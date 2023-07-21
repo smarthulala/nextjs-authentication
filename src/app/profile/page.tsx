@@ -7,6 +7,7 @@ import { useState } from 'react'
 export default function ProfilePage() {
   const router = useRouter()
   const [data, setData] = useState('Nothing')
+  const [loading, setLoading] = useState(false)
 
   const logout = async () => {
     try {
@@ -18,21 +19,31 @@ export default function ProfilePage() {
   }
 
   const getUserDetails = async () => {
-    const response = await axios.get('/api/users/me')
-    console.log(response.data)
-    setData(response.data.data._id)
+    try {
+      setLoading(true)
+      const response = await axios.get('/api/users/me')
+      console.log(response.data)
+      setData(response.data.data._id)
+    } catch (error: any) {
+      console.log('Error fetching user data', error.message)
+    } finally {
+      setLoading(false)
+    }
   }
 
   return (
     <div className='h-screen flex flex-col justify-center items-center gap-4'>
-      <h1>Profile</h1>
+      <h1>{loading ? 'Processing' : 'Profile'}</h1>
       <hr />
       <p className='text-5xl'>Profile Page</p>
       <h2>
         {data === 'Nothing' ? (
           'Nothing'
         ) : (
-          <Link className='rounded text-black bg-orange-500 p-2' href={`/profile/${data}`}>
+          <Link
+            className='rounded text-black bg-orange-500 p-2'
+            href={`/profile/${data}`}
+          >
             {data}
           </Link>
         )}
