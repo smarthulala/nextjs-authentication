@@ -1,62 +1,28 @@
 'use client'
 import Link from 'next/link'
+import { useRouter } from 'next/navigation'
 import axios from 'axios'
-import { useState, useEffect } from 'react'
 
-export default function ForgotPasswordPage() {
-  const [password, setPassword] = useState('')
-  const [confirmPassword, setConfirmPassword] = useState('')
-  const [passwordMatch, setPasswordMatch] = useState(false)
-
-  const handlePasswordChange = (event: any) => {
-    setPassword(event.target.value)
-  }
-
-  const handleConfirmPasswordChange = (event: any) => {
-    setConfirmPassword(event.target.value)
-  }
-
-  const CheckPasswordMatch = () => {}
-
-  useEffect(() => {
-    if (password === confirmPassword) {
-      setPasswordMatch(true)
-    } else {
-      setPasswordMatch(false)
-    }
-  }, [password, confirmPassword])
-
+export default function ForgotPassword() {
   return (
     <div className='h-screen flex flex-col justify-center items-center gap-4'>
-      <h1>Set your password</h1>
-      <label htmlFor='newPassword'>New Password</label>
+      <hr />
+      <label htmlFor='email'>Email</label>
       <input
         className='p-2 focus:outline-none rounded text-black'
-        type='password'
-        id='newPassword'
-        placeholder='new password..'
-        onChange={handlePasswordChange}
+        type='text'
+        id='email'
+        placeholder='Email..'
       />
-      <label htmlFor='confirmPassword'>Confirm Password</label>
-      <input
-        className='p-2 focus:outline-none rounded text-black'
-        type='password'
-        id='confirmPassword'
-        placeholder='confirm password..'
-        onChange={handleConfirmPasswordChange}
-      />
-      <button
-        className='bg-green-700 p-2 border border-white rounded disabled:bg-slate-400'
-        onClick={CheckPasswordMatch}
-        disabled={!passwordMatch}
-      >
-        {passwordMatch === true ? 'Confirm' : 'Not match'}
+      <button className='p-2 focus:outline-none w-20 bg-emerald-600 border rounded-lg text-center'>
+        Login
       </button>
+      Do not have an account?
       <Link
         className='p-2 focus:outline-none w-20 bg-black border rounded-lg text-center'
-        href='/login'
+        href='/signup'
       >
-        Login Page
+        Signup
       </Link>
     </div>
   )

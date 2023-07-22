@@ -64,6 +64,12 @@ export default function LoginPage() {
       >
         Login
       </button>
+      <Link
+        className='p-2 focus:outline-none w-20 bg-black border rounded-lg text-center'
+        href='/signup'
+      >
+        Forgot your password?
+      </Link>
       Do not have an account?
       <Link
         className='p-2 focus:outline-none w-20 bg-black border rounded-lg text-center'
