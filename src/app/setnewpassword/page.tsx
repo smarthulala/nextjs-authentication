@@ -4,11 +4,14 @@ import axios from 'axios'
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 
-export default function ResetPasswordPage() {
+export default function SetNewPassword() {
   const [password, setPassword] = useState('1')
   const [confirmPassword, setConfirmPassword] = useState('')
   const [passwordMatch, setPasswordMatch] = useState(false)
   const [token, setToken] = useState('')
+  const [loading, setLoading] = useState(false)
+
+  const router = useRouter()
 
   const handlePasswordChange = (event: any) => {
     setPassword(event.target.value)
@@ -19,15 +22,22 @@ export default function ResetPasswordPage() {
   }
 
   const CheckPasswordMatch = () => {
+    setNewPassword()
     setPassword('')
     setConfirmPassword('')
   }
 
-  const verifyUserEmail = async () => {
+  const setNewPassword = async () => {
     try {
-      await axios.post('/api/users/forgotpassword', { token })
+      setLoading(true)
+
+      await axios.post('/api/users/setnewpassword', { token, password })
+
+      router.push('/login')
     } catch (error: any) {
       console.log(error.message)
+    } finally {
+      setLoading(false)
     }
   }
 
@@ -35,12 +45,6 @@ export default function ResetPasswordPage() {
     const urlToken = window.location.search.split('=')[1]
     setToken(urlToken || '')
   }, [])
-
-  useEffect(() => {
-    if (token.length > 0) {
-      verifyUserEmail()
-    }
-  }, [token])
 
   useEffect(() => {
     if (password === confirmPassword) {
@@ -52,7 +56,7 @@ export default function ResetPasswordPage() {
 
   return (
     <div className='h-screen flex flex-col justify-center items-center gap-4'>
-      <h1>Set your password</h1>
+      <h1>{loading ? 'Processing' : 'Set your password'}</h1>
       <label htmlFor='newPassword'>New Password</label>
       <input
         className='p-2 focus:outline-none rounded text-black'

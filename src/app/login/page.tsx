@@ -66,7 +66,7 @@ export default function LoginPage() {
       </button>
       <Link
         className='p-2 focus:outline-none w-20 bg-black border rounded-lg text-center'
-        href='/signup'
+        href='/forgotpassword'
       >
         Forgot your password?
       </Link>
