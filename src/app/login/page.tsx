@@ -71,6 +71,12 @@ export default function Login() {
       </div>
       <Link
         className='p-2 rounded border active:bg-green-600 hover:bg-green-600'
+        href='/forgotpassword'
+      >
+        Forgot login details
+      </Link>
+      <Link
+        className='p-2 rounded border active:bg-green-600 hover:bg-green-600'
         href='/'
       >
         Go to Home

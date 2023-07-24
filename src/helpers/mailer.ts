@@ -36,14 +36,14 @@ export const sendMail = async ({ email, emailType, userId }: any) => {
       html: `<div style="display: block; margin: auto; max-width: 600px;" class="main">
       <h1 style="font-size: 18px; font-weight: bold; margin-top: 20px">Congrats for sending test email with Mailtrap!</h1>
       <p>Click <a href="${process.env.DOMAIN}/${
-        emailType === 'verify' ? 'verifyemail' : 'forgotpassword'
+        emailType === 'verify' ? 'verifyemail' : 'updatepassword'
       }?token=${hashedToken}">here</a> to ${
         emailType === 'verify' ? 'verify your email' : 'reset your password'
       }</p>
       <br/>
       <p>or copy and paste the link below in your browser</p>
       <p>${process.env.DOMAIN}/${
-        emailType === 'verify' ? 'verifyemail' : 'forgotpassword'
+        emailType === 'verify' ? 'verifyemail' : 'updatepassword'
       }?token=${hashedToken}</p>
     </div>`,
     }
