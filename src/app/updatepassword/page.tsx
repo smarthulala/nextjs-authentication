@@ -13,10 +13,11 @@ export default function ForgotPassword() {
   const handleClick = async () => {
     try {
       setLoading(true)
-
+      console.log(token, password)
       await axios.post('/api/users/updatepassword', { token, password })
+      console.log('Update password successful')
     } catch (error: any) {
-      console.log(error.message)
+      console.log('error in fetching updatepassword api', error.message)
     } finally {
       setLoading(false)
     }

@@ -20,8 +20,8 @@ export async function POST(request: NextRequest) {
     const hashedPassword = await bcryptjs.hash(password, 10)
 
     const user = await User.findOne({
-      verifyToken: token,
-      verifyTokenExpiry: { $gt: Date.now() },
+      forgotPasswordToken: token,
+      forgotPasswordTokenExpiry: { $gt: Date.now() },
     })
 
     if (!user) {
