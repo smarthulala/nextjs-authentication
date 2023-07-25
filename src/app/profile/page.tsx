@@ -4,62 +4,58 @@ import axios from 'axios'
 import { useRouter } from 'next/navigation'
 import { useState } from 'react'
 
-export default function ProfilePage() {
+export default function Profile() {
   const router = useRouter()
-  const [data, setData] = useState('Nothing')
-  const [loading, setLoading] = useState(false)
+  const [data, setData] = useState('')
 
   const logout = async () => {
     try {
-      axios.get('/api/users/logout')
-      console.log('Logout successfully')
+      await axios.get('/api/users/logout')
+
+      router.push('/login')
     } catch (error: any) {
-      console.log(error.message)
+      console.log('logout failed', error.message)
     }
   }
 
   const getUserDetails = async () => {
-    try {
-      setLoading(true)
-      const response = await axios.get('/api/users/me')
-      console.log(response.data)
-      setData(response.data.data._id)
-    } catch (error: any) {
-      console.log('Error fetching user data', error.message)
-    } finally {
-      setLoading(false)
-    }
+    const response = await axios.get('/api/users/me')
+    setData(response.data.data._id)
   }
 
   return (
-    <div className='h-screen flex flex-col justify-center items-center gap-4'>
-      <h1>{loading ? 'Processing' : 'Profile'}</h1>
-      <hr />
-      <p className='text-5xl'>Profile Page</p>
-      <h2>
-        {data === 'Nothing' ? (
-          'Nothing'
+    <main className='flex min-h-screen flex-col items-center justify-center gap-8 text-2xl'>
+      <div className='text-4xl'>Profile Page</div>
+      <div>
+        {!data ? (
+          <div>Hello there</div>
         ) : (
           <Link
-            className='rounded text-black bg-orange-500 p-2'
             href={`/profile/${data}`}
+            className='bg-orange-500 p-2 rounded text-black'
           >
             {data}
           </Link>
         )}
-      </h2>
+      </div>
       <button
+        className='p-2 rounded border active:bg-green-600 hover:bg-green-600 text-center disabled:bg-gray-500'
         onClick={getUserDetails}
-        className='p-2 focus:outline-none bg-blue-600 border rounded-lg text-center'
       >
-        User details
+        Get user details
       </button>
       <button
+        className='p-2 rounded border active:bg-green-600 hover:bg-green-600 text-center disabled:bg-gray-500'
         onClick={logout}
-        className='p-2 focus:outline-none bg-gray-600 border rounded-lg text-center'
       >
-        <Link href='/login'>Sign out</Link>
+        Log out
       </button>
-    </div>
+      <Link
+        className='p-2 rounded border active:bg-green-600 hover:bg-green-600'
+        href='/'
+      >
+        Go to Home Page
+      </Link>
+    </main>
   )
 }

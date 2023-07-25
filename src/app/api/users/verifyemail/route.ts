@@ -1,5 +1,5 @@
-import { connect } from '@/dbConfig/dbConfig'
 import { NextRequest, NextResponse } from 'next/server'
+import { connect } from '@/dbConfig/dbConfig'
 import User from '@/models/userModel'
 
 connect()
@@ -8,16 +8,13 @@ export async function POST(request: NextRequest) {
   try {
     const requestBody = await request.json()
     const { token } = requestBody
-
-    console.log(token)
-
     const user = await User.findOne({
       verifyToken: token,
       verifyTokenExpiry: { $gt: Date.now() },
     })
 
     if (!user) {
-      return NextResponse.json({ error: 'Invalid token' }, { status: 400 })
+      return NextResponse.json({ error: 'Invalid token' })
     }
 
     user.isVerified = true
@@ -29,8 +26,9 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({
       message: 'Email verified successful',
       success: true,
+      email: user.email,
     })
   } catch (error: any) {
-    return NextResponse.json(error.message)
+    return NextResponse.json('error on veryfyapi', error.message)
   }
 }

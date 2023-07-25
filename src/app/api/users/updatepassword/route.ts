@@ -1,7 +1,7 @@
+import { NextRequest, NextResponse } from 'next/server'
 import { connect } from '@/dbConfig/dbConfig'
-import { NextResponse, NextRequest } from 'next/server'
 import User from '@/models/userModel'
-import bcrypt from 'bcryptjs'
+import bcryptjs from 'bcryptjs'
 
 connect()
 
@@ -10,6 +10,15 @@ export async function POST(request: NextRequest) {
     const requestBody = await request.json()
     const { token, password } = requestBody
 
+    if (!token && !password) {
+      return NextResponse.json(
+        { message: 'Token or password not found for forgot password' },
+        { status: 404 }
+      )
+    }
+
+    const hashedPassword = await bcryptjs.hash(password, 10)
+
     const user = await User.findOne({
       forgotPasswordToken: token,
       forgotPasswordTokenExpiry: { $gt: Date.now() },
@@ -17,29 +26,22 @@ export async function POST(request: NextRequest) {
 
     if (!user) {
       return NextResponse.json(
-        { error: 'User does not exist' },
-        { status: 400 }
+        { message: 'User not found for forgot password' },
+        { status: 404 }
       )
     }
-    console.log('old password is ', user.password)
 
-    const hashedPassword = await bcrypt.hash(password, 10)
-
+    user.password = hashedPassword
     user.forgotPasswordToken = undefined
     user.forgotPasswordTokenExpiry = undefined
-    user.password = hashedPassword
 
-    console.log('new password is ', user.password)
     await user.save()
 
     return NextResponse.json({
-      message: 'Password reset successful',
+      message: 'Password updated successful',
       success: true,
     })
   } catch (error: any) {
-    return NextResponse.json(
-      { error: 'Error in forgotpassword api', message: error.message },
-      { status: 500 }
-    )
+    return NextResponse.json({ error: error.message }, { status: 500 })
   }
 }

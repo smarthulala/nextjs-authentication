@@ -1,4 +1,4 @@
-import mongoose from 'mongoose'
+import mongoose, { mongo } from 'mongoose'
 
 export async function connect() {
   try {
@@ -6,17 +6,14 @@ export async function connect() {
     const connection = mongoose.connection
 
     connection.on('connected', () => {
-      console.log('MongoDB connected successfully')
+      console.log('MongoDB is connected successful')
     })
 
-    connection.on('error', (error) => {
-      console.log(
-        'MongoDB connection failed, Please make sure MongoDB is running' + error
-      )
+    connection.on('error', (err) => {
+      console.log('Failed to connect MongoDB', err)
       process.exit(1)
     })
-  } catch (error) {
-    console.log('Something goes wrong')
-    console.log(error)
+  } catch (error: any) {
+    console.log('Error when connect MongoDB', error.message)
   }
 }

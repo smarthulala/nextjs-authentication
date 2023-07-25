@@ -1,25 +1,24 @@
 'use client'
 import Link from 'next/link'
-import { useState, useEffect } from 'react'
-import { useRouter } from 'next/navigation'
 import axios from 'axios'
-import toast from 'react-hot-toast'
+import { useEffect, useState } from 'react'
+import { useRouter } from 'next/navigation'
 
-export default function LoginPage() {
+export default function Login() {
   const router = useRouter()
+  const [buttonDisable, setButtonDisable] = useState(true)
+  const [loading, setLoading] = useState(false)
   const [user, setUser] = useState({
     email: '',
     password: '',
   })
-  const [buttonDisabled, setButtonDisabled] = useState(false)
-  const [loading, setLoading] = useState(false)
 
   const onLogin = async () => {
     try {
       setLoading(true)
       const response = await axios.post('/api/users/login', user)
-      console.log('login successfully', response.data)
-      toast.success('login successfully')
+      console.log('login success', response.data)
+
       router.push('/profile')
     } catch (error: any) {
       console.log('Login failed', error.message)
@@ -30,53 +29,58 @@ export default function LoginPage() {
 
   useEffect(() => {
     if (user.email.length > 0 && user.password.length > 0) {
-      setButtonDisabled(false)
+      setButtonDisable(false)
     } else {
-      setButtonDisabled(true)
+      setButtonDisable(true)
     }
   }, [user])
 
   return (
-    <div className='h-screen flex flex-col justify-center items-center gap-4'>
-      <h1>{loading ? 'Processing' : 'Login'}</h1>
-      <hr />
+    <main className='flex min-h-screen flex-col items-center justify-center gap-4 text-2xl'>
+      <div className='text-4xl'>{loading ? 'Processing' : 'Login'}</div>
       <label htmlFor='email'>Email</label>
       <input
-        className='p-2 focus:outline-none rounded text-black'
         type='text'
-        id='email'
-        placeholder='Email..'
+        placeholder='Email'
         value={user.email}
-        onChange={(e) => setUser({ ...user, email: e.target.value })}
+        onChange={(event) => setUser({ ...user, email: event.target.value })}
+        className='rounded text-black p-2 focus:outline-none w-[300px]'
       />
       <label htmlFor='password'>Password</label>
       <input
-        className='p-2 focus:outline-none rounded text-black'
-        type='text'
-        id='password'
-        placeholder='Password..'
+        type='password'
+        placeholder='password'
         value={user.password}
-        onChange={(e) => setUser({ ...user, password: e.target.value })}
+        onChange={(event) => setUser({ ...user, password: event.target.value })}
+        className='rounded text-black p-2 focus:outline-none w-[300px]'
       />
-      <button
-        className='p-2 focus:outline-none w-20 bg-emerald-600 border rounded-lg text-center'
-        onClick={onLogin}
-      >
-        Login
-      </button>
+      <div className='flex justify-between w-[300px] my-8'>
+        <button
+          className='p-2 rounded border active:bg-green-600 hover:bg-green-600 text-center disabled:bg-gray-500'
+          onClick={onLogin}
+          disabled={buttonDisable}
+        >
+          Login
+        </button>
+        <Link
+          href='/signup'
+          className='p-2 rounded border active:bg-green-600 hover:bg-green-600 text-center'
+        >
+          Sign Up Page
+        </Link>
+      </div>
       <Link
-        className='p-2 focus:outline-none w-20 bg-black border rounded-lg text-center'
+        className='p-2 rounded border active:bg-green-600 hover:bg-green-600'
         href='/forgotpassword'
       >
-        Forgot your password?
+        Forgot login details
       </Link>
-      Do not have an account?
       <Link
-        className='p-2 focus:outline-none w-20 bg-black border rounded-lg text-center'
-        href='/signup'
+        className='p-2 rounded border active:bg-green-600 hover:bg-green-600'
+        href='/'
       >
-        Signup
+        Go to Home
       </Link>
-    </div>
+    </main>
   )
 }

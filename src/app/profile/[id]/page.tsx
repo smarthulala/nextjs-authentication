@@ -1,17 +1,16 @@
 import Link from 'next/link'
 
-export default function UserProfilePage({ params }: any) {
+export default function Profile({ params }: any) {
   return (
-    <div className='h-screen flex flex-col justify-center items-center gap-4'>
-      <h1>Profile</h1>
-      <hr />
-      <p className='text-5xl my-10'>
-        Profile Page
-        <span className='p-2 rounded bg-orange-500 ml-2 text-black'>
-          {params.id}
-        </span>
-      </p>
-      <Link href='/profile'>Back to Profile Page</Link>
-    </div>
+    <main className='flex min-h-screen flex-col items-center justify-center gap-8 text-2xl'>
+      <div className='text-4xl'>User Page</div>
+      <div className='bg-orange-500 rounded p-4 text-black'>{params.id}</div>
+      <Link
+        className='bg-gray-700 p-2 rounded border active:bg-green-600 hover:bg-green-600'
+        href='/profile'
+      >
+        Go to profile
+      </Link>
+    </main>
   )
 }

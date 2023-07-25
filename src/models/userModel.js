@@ -8,7 +8,7 @@ const userSchema = new mongoose.Schema({
   },
   email: {
     type: String,
-    required: [true, 'Please provide a Email'],
+    required: [true, 'Please provide a email'],
     unique: true,
   },
   password: {
@@ -19,16 +19,16 @@ const userSchema = new mongoose.Schema({
     type: Boolean,
     default: false,
   },
-  isAdmin: {
-    type: Boolean,
-    default: false,
-  },
   forgotPasswordToken: String,
   forgotPasswordTokenExpiry: Date,
   verifyToken: String,
   verifyTokenExpiry: Date,
 })
 
-const User = mongoose.models.users || mongoose.model('users', userSchema)
+if (mongoose.connection.models['user']) {
+  delete mongoose.connection.models['user']
+}
+
+const User = mongoose.models.users || mongoose.model('user', userSchema)
 
 export default User

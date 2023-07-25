@@ -1,19 +1,21 @@
 'use client'
 import Link from 'next/link'
+import { useState, useEffect } from 'react'
+import { useRouter } from 'next/navigation'
 import axios from 'axios'
-import { useEffect, useState } from 'react'
+import { verify } from 'crypto'
 
-export default function VerifyEmailPage() {
+export default function VerifyEmail() {
+  const router = useRouter()
   const [token, setToken] = useState('')
-  const [verified, setVerified] = useState(false)
-  const [error, setError] = useState(false)
+  const [email, setEmail] = useState('')
 
-  const verifyUserEmail = async () => {
+  const onVerify = async () => {
     try {
-      await axios.post('/api/users/verifyemail', { token })
-      setVerified(true)
+      const response = await axios.post('/api/users/verifyemail', { token })
+      setEmail(response.data.email)
+      return response
     } catch (error: any) {
-      setError(true)
       console.log(error.message)
     }
   }
@@ -25,32 +27,20 @@ export default function VerifyEmailPage() {
 
   useEffect(() => {
     if (token.length > 0) {
-      verifyUserEmail()
+      onVerify()
     }
   }, [token])
 
   return (
-    <div className='h-screen flex flex-col justify-center items-center gap-4'>
-      <h1 className='text-4xl'>Verify Email</h1>
-      <h2 className='p-2 bg-orange-500 text-black'>
-        {token ? `${token}` : 'No token'}
-      </h2>
-      {verified && (
-        <div className='flex flex-col'>
-          <h2 className='text-2xl'>Email Verified</h2>
-          <Link
-            className='text-center bg-green-700 p-2 rounded mt-4'
-            href='/login'
-          >
-            Login Page
-          </Link>
-        </div>
-      )}
-      {error && (
-        <div>
-          <h2 className='text-2xl'>Something is wrong</h2>
-        </div>
-      )}
-    </div>
+    <main className='flex min-h-screen flex-col items-center justify-center gap-4 text-2xl'>
+      <div className='text-4xl'>Your email: {email} is verified</div>
+
+      <Link
+        href='/login'
+        className='p-2 rounded border active:bg-green-600 hover:bg-green-600 text-center'
+      >
+        Log in Page
+      </Link>
+    </main>
   )
 }

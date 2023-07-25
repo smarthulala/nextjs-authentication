@@ -3,28 +3,27 @@ import Link from 'next/link'
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import axios from 'axios'
-import { toast } from 'react-hot-toast'
 
-export default function SignupPage() {
+export default function Signup() {
   const router = useRouter()
+  const [buttonDisable, setButtonDisable] = useState(true)
+  const [loading, setLoading] = useState(false)
   const [user, setUser] = useState({
     email: '',
     password: '',
     username: '',
   })
-  const [buttonDisabled, setButtonDisabled] = useState(false)
-  const [loading, setLoading] = useState(false)
 
   const onSignup = async () => {
     try {
       setLoading(true)
 
       const response = await axios.post('/api/users/signup', user)
+      console.log('Sign up successful', response.data)
 
-      console.log('signup success', response.data)
       router.push('/login')
     } catch (error: any) {
-      console.log('Signup failed', error)
+      console.log('failed fetching signup api', error.message)
     } finally {
       setLoading(false)
     }
@@ -36,56 +35,60 @@ export default function SignupPage() {
       user.password.length > 0 &&
       user.username.length > 0
     ) {
-      setButtonDisabled(false)
+      setButtonDisable(false)
     } else {
-      setButtonDisabled(true)
+      setButtonDisable(true)
     }
   }, [user])
 
   return (
-    <div className='h-screen flex flex-col justify-center items-center gap-4'>
-      <h1>{loading ? 'Processing' : 'Signup'}</h1>
-      <hr />
-      <label htmlFor='username'>Username</label>
-      <input
-        className='p-2 focus:outline-none rounded text-black'
-        type='text'
-        id='username'
-        placeholder='Username..'
-        value={user.username}
-        onChange={(e) => setUser({ ...user, username: e.target.value })}
-      />
+    <main className='flex min-h-screen flex-col items-center justify-center gap-4 text-2xl'>
+      <div className='text-4xl'>{loading ? 'Processing' : 'Signup'}</div>
       <label htmlFor='email'>Email</label>
       <input
-        className='p-2 focus:outline-none rounded text-black'
         type='text'
-        id='email'
-        placeholder='Email..'
+        placeholder='Email'
         value={user.email}
-        onChange={(e) => setUser({ ...user, email: e.target.value })}
+        onChange={(event) => setUser({ ...user, email: event.target.value })}
+        className='rounded text-black p-2 focus:outline-none w-[300px]'
+      />
+      <label htmlFor='username'>Username</label>
+      <input
+        type='text'
+        placeholder='username'
+        value={user.username}
+        onChange={(event) => setUser({ ...user, username: event.target.value })}
+        className='rounded text-black p-2 focus:outline-none w-[300px]'
       />
       <label htmlFor='password'>Password</label>
       <input
-        className='p-2 focus:outline-none rounded text-black'
         type='password'
-        id='password'
-        placeholder='Password..'
+        placeholder='password'
         value={user.password}
-        onChange={(e) => setUser({ ...user, password: e.target.value })}
+        onChange={(event) => setUser({ ...user, password: event.target.value })}
+        className='rounded text-black p-2 focus:outline-none w-[300px]'
       />
-      <button
-        className='p-2 focus:outline-none min-w-20 bg-black border rounded-lg text-center'
-        onClick={onSignup}
-      >
-        {buttonDisabled ? 'Please fill in all fields' : 'Signup'}
-      </button>
-      Or
+      <div className='flex justify-between w-[300px] my-8'>
+        <button
+          className='p-2 rounded border active:bg-green-600 hover:bg-green-600 text-center disabled:bg-gray-500'
+          onClick={onSignup}
+          disabled={buttonDisable}
+        >
+          Signup
+        </button>
+        <Link
+          href='/login'
+          className='p-2 rounded border active:bg-green-600 hover:bg-green-600 text-center'
+        >
+          Login Page
+        </Link>
+      </div>
       <Link
-        className='p-2 focus:outline-none min-w-20 bg-emerald-600 border rounded-lg text-center'
-        href='/login'
+        className='p-2 rounded border active:bg-green-600 hover:bg-green-600'
+        href='/'
       >
-        Login
+        Go to Home
       </Link>
-    </div>
+    </main>
   )
 }

@@ -1,16 +1,18 @@
 import nodemailer from 'nodemailer'
 import User from '@/models/userModel'
-import bcriptjs from 'bcryptjs'
+import bcryptjs from 'bcryptjs'
+import { verify } from 'crypto'
 
-export const sendEmail = async ({ email, emailType, userId }: any) => {
+export const sendMail = async ({ email, emailType, userId }: any) => {
   try {
-    const hashedToken = await bcriptjs.hash(userId.toString(), 10)
+    const hashedToken = await bcryptjs.hash(userId.toString(), 10)
+
     if (emailType === 'verify') {
       await User.findByIdAndUpdate(userId, {
         verifyToken: hashedToken,
         verifyTokenExpiry: Date.now() + 3600000,
       })
-    } else if (emailType === 'resetPassword') {
+    } else if (emailType === 'forgotpassword') {
       await User.findByIdAndUpdate(userId, {
         forgotPasswordToken: hashedToken,
         forgotPasswordTokenExpiry: Date.now() + 3600000,
@@ -31,13 +33,19 @@ export const sendEmail = async ({ email, emailType, userId }: any) => {
       to: email,
       subject:
         emailType === 'verify' ? 'Verify your email' : 'Reset your password',
-      html: `<p>Click <a href="${
-        process.env.DOMAIN
-      }/setnewpassword?token=${hashedToken}">here</a> to ${
-        emailType === 'verify' ? 'Verify your email' : 'Reset your password'
-      } or copy and paste the link in your browser. <br> ${
-        process.env.DOMAIN
-      }/setnewpassword?token=${hashedToken}</p>`,
+      html: `<div style="display: block; margin: auto; max-width: 600px;" class="main">
+      <h1 style="font-size: 18px; font-weight: bold; margin-top: 20px">Congrats for sending test email with Mailtrap!</h1>
+      <p>Click <a href="${process.env.DOMAIN}/${
+        emailType === 'verify' ? 'verifyemail' : 'updatepassword'
+      }?token=${hashedToken}">here</a> to ${
+        emailType === 'verify' ? 'verify your email' : 'reset your password'
+      }</p>
+      <br/>
+      <p>or copy and paste the link below in your browser</p>
+      <p>${process.env.DOMAIN}/${
+        emailType === 'verify' ? 'verifyemail' : 'updatepassword'
+      }?token=${hashedToken}</p>
+    </div>`,
     }
 
     const mailResponse = await transport.sendMail(mailOptions)
