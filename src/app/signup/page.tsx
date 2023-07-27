@@ -44,7 +44,7 @@ export default function Signup() {
   return (
     <main className='flex min-h-screen flex-col items-center justify-center gap-4 text-2xl'>
       <div className='text-4xl'>{loading ? 'Processing' : 'Signup'}</div>
-      <label htmlFor='email'>Email</label>
+      <label htmlFor='email'>Emails</label>
       <input
         type='text'
         placeholder='Email'
